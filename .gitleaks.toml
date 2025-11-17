@@ -1,0 +1,141 @@
+# ============================================
+# Gitleaks Configuration for YumiMX
+# ============================================
+# Detects secrets, API keys, and credentials in code
+# Documentation: https://github.com/gitleaks/gitleaks
+
+title = "Gitleaks config for YumiMX"
+
+# Use all default Gitleaks rules (200+ patterns)
+[extend]
+useDefault = true
+
+# ============================================
+# Custom Rules for This Project
+# ============================================
+
+# OpenAI API Keys
+[[rules]]
+id = "openai-api-key"
+description = "Detected OpenAI API Key"
+regex = '''sk-[a-zA-Z0-9]{20,}'''
+keywords = ["sk-"]
+tags = ["api", "key", "openai", "secret"]
+
+[[rules.Entropies]]
+Min = "3.5"
+Max = "8"
+Group = "1"
+
+# Supabase Keys (JWT format)
+[[rules]]
+id = "supabase-jwt-key"
+description = "Detected Supabase JWT Token (anon or service_role key)"
+regex = '''eyJ[a-zA-Z0-9_\-]{20,}\.eyJ[a-zA-Z0-9_\-]{20,}\.?[a-zA-Z0-9_\-]*'''
+keywords = ["eyJ", "supabase", "anon", "service_role"]
+tags = ["supabase", "jwt", "token", "secret"]
+
+# Database Connection Strings with passwords
+[[rules]]
+id = "database-connection-string"
+description = "Detected database connection string with password"
+regex = '''(postgres|postgresql|mysql|mongodb(\+srv)?):\/\/[^:]+:[^@]+@[^\/]+'''
+keywords = ["postgres", "postgresql", "mysql", "mongodb"]
+tags = ["database", "credentials", "secret"]
+
+# Generic API Keys in environment variable format
+[[rules]]
+id = "env-api-key"
+description = "Detected API key or secret in environment variable"
+regex = '''(?i)(api[_-]?key|api[_-]?secret|secret[_-]?key|private[_-]?key|access[_-]?token)\s*[:=]\s*["']?[a-zA-Z0-9_\-]{20,}["']?'''
+keywords = ["api_key", "apikey", "api-key", "secret", "token", "private_key"]
+tags = ["api", "key", "secret", "env"]
+
+# Stripe API Keys
+[[rules]]
+id = "stripe-api-key"
+description = "Detected Stripe API key"
+regex = '''sk_(test|live)_[a-zA-Z0-9]{24,}'''
+keywords = ["sk_test", "sk_live", "stripe"]
+tags = ["stripe", "payment", "secret"]
+
+# Generic high-entropy strings (catches unknowns)
+[[rules]]
+id = "high-entropy-string"
+description = "Detected high entropy string (potential secret)"
+regex = '''[a-zA-Z0-9+/]{40,}={0,2}'''
+tags = ["entropy", "secret"]
+
+[[rules.Entropies]]
+Min = "4.5"
+Max = "8"
+
+# ============================================
+# Allowlist - False Positives & Safe Patterns
+# ============================================
+
+[allowlist]
+description = "Safe patterns and files that should not trigger alerts"
+
+# Safe string patterns (examples, test data, placeholders)
+regexes = [
+    # Placeholder patterns
+    '''your-[a-z-]+(-here)?''',
+    '''(get-from-|obtain-from-)''',
+
+    # Test/mock/dummy/example data
+    '''(?i)(test|mock|dummy|fake|example|sample|placeholder)[_-]?(key|secret|token|password)''',
+
+    # Short example keys (not real)
+    '''sk-[a-zA-Z0-9]{1,15}["\s]''',
+
+    # Generic placeholders
+    '''xxx+''',
+    '''yyy+''',
+    '''zzz+''',
+]
+
+# Safe file paths (won't be scanned for secrets)
+paths = [
+    # Example/template files
+    '''\.env\.example$''',
+    '''\.env\.template$''',
+
+    # Test files
+    '''.*\.test\.(ts|tsx|js|jsx)$''',
+    '''.*\.spec\.(ts|tsx|js|jsx)$''',
+    '''.*__tests__.*''',
+    '''.*__mocks__.*''',
+    '''.*/tests?/.*''',
+
+    # Documentation
+    '''.*\.md$''',
+    '''.*\.mdx$''',
+    '''docs?/.*''',
+
+    # CI/CD config (often has example keys)
+    '''\.github/workflows/.*\.yml$''',
+
+    # Lock files and package manifests
+    '''package-lock\.json$''',
+    '''yarn\.lock$''',
+    '''pnpm-lock\.yaml$''',
+
+    # Build output (shouldn't have secrets anyway)
+    '''\.next/.*''',
+    '''out/.*''',
+    '''dist/.*''',
+    '''build/.*''',
+]
+
+# Specific commits to ignore (use commit SHA)
+commits = []
+
+# Stop words - if found, reduce likelihood of false positive
+stopwords = [
+    "example",
+    "test",
+    "placeholder",
+    "your-key-here",
+    "change-me",
+]

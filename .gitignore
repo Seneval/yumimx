@@ -1,0 +1,150 @@
+# ============================================
+# CRITICAL: Environment Variables & Secrets
+# ============================================
+# NEVER commit these files - they contain real API keys and credentials
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# ============================================
+# Next.js Build Output
+# ============================================
+
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# ============================================
+# Dependencies
+# ============================================
+
+node_modules/
+.pnp
+.pnp.js
+jspm_packages/
+
+# ============================================
+# Testing & Coverage
+# ============================================
+
+coverage/
+.nyc_output
+*.lcov
+.jest/
+
+# ============================================
+# Logs
+# ============================================
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ============================================
+# Cache & Temporary Files
+# ============================================
+
+.turbo/
+.cache/
+tmp/
+temp/
+*.tmp
+.eslintcache
+
+# ============================================
+# Operating System Files
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ============================================
+# IDE / Editor Files
+# ============================================
+
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# ============================================
+# TypeScript
+# ============================================
+
+*.tsbuildinfo
+
+# ============================================
+# Supabase
+# ============================================
+
+supabase/.branches
+supabase/.temp
+supabase/functions/.env
+
+# ============================================
+# Vercel
+# ============================================
+
+.vercel
+.vercel.json
+
+# ============================================
+# Security Scanning Results
+# ============================================
+
+.secrets.baseline
+.gitleaks-report.json
+gitleaks-report.json
+
+# ============================================
+# CLAUDE.md (per user's global instructions)
+# ============================================
+
+CLAUDE.md
+
+# ============================================
+# Other
+# ============================================
+
+# Storybook
+storybook-static/
+
+# Bundle analyzer
+.next/analyze/
+
+# PWA files
+public/sw.js
+public/workbox-*.js
+public/worker-*.js
+public/sw.js.map
+public/workbox-*.js.map
+public/worker-*.js.map
