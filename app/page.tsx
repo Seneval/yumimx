@@ -1,36 +1,98 @@
-import { GoogleLoginButton } from "@/components/auth/google-login-button";
+import { Hero } from "@/components/landing/hero";
+import { Features } from "@/components/landing/features";
+import { Pricing } from "@/components/landing/pricing";
+import { FAQ } from "@/components/landing/faq";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-indigo-50 to-white">
-      <main className="flex w-full max-w-md flex-col items-center gap-8 px-6 py-12">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <h1 className="text-5xl font-bold text-gray-900">
-            Yumi<span className="text-indigo-600">MX</span>
-          </h1>
-          <p className="text-xl text-gray-600">
-            Interpreta tus sueños con psicología Jungiana
-          </p>
-        </div>
+    <main className="min-h-screen">
+      <Hero />
+      <Features />
+      <Pricing />
+      <FAQ />
 
-        <div className="w-full max-w-sm space-y-6">
-          <div className="rounded-2xl bg-white p-8 shadow-xl">
-            <h2 className="mb-6 text-center text-2xl font-semibold text-gray-900">
-              Descubre el significado de tus sueños
-            </h2>
-            <GoogleLoginButton />
+      {/* Footer */}
+      <footer className="bg-gray-900 py-12 text-gray-400">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div>
+              <h3 className="mb-4 text-lg font-bold text-white">
+                Yumi<span className="text-violet-400">MX</span>
+              </h3>
+              <p className="text-sm">
+                Interpreta tus sueños con psicología Jungiana. Explora tu
+                inconsciente y descubre tu verdadero ser.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="mb-4 text-sm font-semibold text-white">
+                Recursos
+              </h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    Guía de Jung
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    Símbolos Oníricos
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 text-sm font-semibold text-white">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    Privacidad
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    Términos
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="mailto:hola@yumimx.com"
+                    className="hover:text-violet-400 transition-colors"
+                  >
+                    Contacto
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <div className="space-y-3 text-center text-sm text-gray-600">
-            <p className="font-medium">Plan Gratuito incluye:</p>
-            <ul className="space-y-2">
-              <li>✓ 3 mensajes de seguimiento por sueño</li>
-              <li>✓ Interpretación basada en Carl Jung</li>
-              <li>✓ Sin necesidad de tarjeta de crédito</li>
-            </ul>
+          <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm">
+            <p>&copy; 2025 YumiMX. Todos los derechos reservados.</p>
           </div>
         </div>
-      </main>
-    </div>
+      </footer>
+    </main>
   );
 }
