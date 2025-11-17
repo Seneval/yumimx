@@ -1,7 +1,9 @@
 /**
- * Environment Variables Validation with Zod
+ * Server-side Environment Variables Validation with Zod
  *
- * This file validates all environment variables at startup.
+ * ⚠️ SERVER-ONLY - This file MUST NOT be imported from client components
+ *
+ * This file validates all environment variables (both public and server-only).
  * If any required variable is missing or invalid, the app will FAIL FAST.
  *
  * SECURITY RULES:
@@ -9,9 +11,12 @@
  * - Variables without prefix are SERVER-ONLY
  * - NEVER use NEXT_PUBLIC_ for sensitive data (API keys, secrets, etc.)
  *
+ * For client-side usage, use '@/lib/env-client' instead.
+ *
  * @see SECURITY-RULES.md for complete security guidelines
  */
 
+import "server-only";
 import { z } from "zod";
 
 // ============================================
@@ -67,6 +72,26 @@ const envSchema = z.object({
       (key) => key.startsWith("sk-") || key.startsWith("sk-proj-"),
       'OPENAI_API_KEY must start with "sk-" or "sk-proj-"',
     ),
+
+  /**
+   * OpenAI Assistant ID for FREE tier users
+   * PRIVATE - SERVER-ONLY - NEVER expose to client
+   * Must start with "asst_"
+   */
+  OPENAI_ASSISTANT_ID_FREE: z
+    .string()
+    .min(1, "OPENAI_ASSISTANT_ID_FREE is required")
+    .startsWith("asst_", 'OPENAI_ASSISTANT_ID_FREE must start with "asst_"'),
+
+  /**
+   * OpenAI Assistant ID for PAID tier users
+   * PRIVATE - SERVER-ONLY - NEVER expose to client
+   * Must start with "asst_"
+   */
+  OPENAI_ASSISTANT_ID_PAID: z
+    .string()
+    .min(1, "OPENAI_ASSISTANT_ID_PAID is required")
+    .startsWith("asst_", 'OPENAI_ASSISTANT_ID_PAID must start with "asst_"'),
 
   // ==========================================
   // Application Configuration
@@ -186,6 +211,8 @@ if (typeof window !== "undefined") {
   const serverOnlyVars = [
     "SUPABASE_SERVICE_ROLE_KEY",
     "OPENAI_API_KEY",
+    "OPENAI_ASSISTANT_ID_FREE",
+    "OPENAI_ASSISTANT_ID_PAID",
     "STRIPE_SECRET_KEY",
     "STRIPE_WEBHOOK_SECRET",
   ] as const;

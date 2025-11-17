@@ -4,7 +4,7 @@
   "private": true,
   "description": "Plataforma de interpretación de sueños con IA Jungiana",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -12,10 +12,20 @@
     "prepare": "command -v pre-commit >/dev/null 2>&1 && pre-commit install || echo 'Pre-commit not installed. Run: brew install pre-commit && pre-commit install'"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.81.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.554.0",
     "next": "16.0.3",
+    "openai": "^6.9.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "server-only": "^0.0.1",
+    "tailwind-merge": "^3.4.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
