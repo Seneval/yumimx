@@ -56,7 +56,9 @@ export function NewDreamForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Título del sueño</Label>
+        <Label htmlFor="title" className="dark:text-white">
+          Título del sueño
+        </Label>
         <Input
           id="title"
           type="text"
@@ -67,11 +69,14 @@ export function NewDreamForm() {
           }
           disabled={isLoading}
           maxLength={200}
+          className="dark:bg-white/20 dark:border-violet-400/30 dark:text-white dark:placeholder:text-violet-200/50"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="dreamDate">Fecha del sueño</Label>
+        <Label htmlFor="dreamDate" className="dark:text-white">
+          Fecha del sueño
+        </Label>
         <Input
           id="dreamDate"
           type="date"
@@ -81,13 +86,14 @@ export function NewDreamForm() {
           }
           disabled={isLoading}
           max={new Date().toISOString().split("T")[0]}
+          className="dark:bg-white/20 dark:border-violet-400/30 dark:text-white"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="content">
+        <Label htmlFor="content" className="dark:text-white">
           Describe tu sueño
-          <span className="ml-2 text-xs text-gray-500">
+          <span className="ml-2 text-xs text-gray-500 dark:text-violet-300">
             ({formData.content.length}/10000)
           </span>
         </Label>
@@ -99,22 +105,27 @@ export function NewDreamForm() {
             setFormData((prev) => ({ ...prev, content: e.target.value }))
           }
           disabled={isLoading}
-          className="min-h-[200px] resize-none"
+          className="min-h-[200px] resize-none dark:bg-white/20 dark:border-violet-400/30 dark:text-white dark:placeholder:text-violet-200/50"
           maxLength={10000}
         />
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 dark:text-violet-200">
           Incluye todos los detalles que recuerdes: personas, lugares,
           emociones, colores, etc.
         </p>
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600 dark:bg-red-500/20 dark:border dark:border-red-400/30 dark:text-red-200">
           {error}
         </div>
       )}
 
-      <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="w-full dark:bg-gradient-to-r dark:from-violet-500 dark:to-purple-600 dark:hover:from-violet-600 dark:hover:to-purple-700"
+        size="lg"
+      >
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

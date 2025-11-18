@@ -18,6 +18,7 @@ import { createClient } from "@/lib/supabase/server";
 import { addMessageToThread, createThread } from "@/lib/openai/threads";
 import { runAssistantStream } from "@/lib/openai/assistant-runner";
 import { TierService } from "@/lib/tier-check";
+import { buildDreamHistoryContext } from "@/lib/services/dream-context-builder";
 
 /**
  * POST /api/chat
@@ -108,9 +109,12 @@ export const POST = withMessageLimitGuard(
       // 2. Add message to OpenAI thread
       await addMessageToThread(threadId, message, "user");
 
-      // 3. Get user context for paid users (optional)
+      // 3. Get user context and dream history for paid users (optional)
       let additionalInstructions: string | undefined;
       if (userTier === "paid") {
+        const contextParts: string[] = [];
+
+        // Get user personal context
         const { data: context } = await supabase
           .from("user_context")
           .select("context_data")
@@ -118,7 +122,24 @@ export const POST = withMessageLimitGuard(
           .single();
 
         if (context?.context_data) {
-          additionalInstructions = `Contexto del usuario: ${context.context_data}\n\nUsa esta información para personalizar tu interpretación.`;
+          contextParts.push(`Contexto del usuario: ${context.context_data}`);
+        }
+
+        // Get dream history context (last 3 dreams)
+        const dreamHistoryContext = await buildDreamHistoryContext(
+          userId,
+          dreamId,
+        );
+
+        if (dreamHistoryContext) {
+          contextParts.push(dreamHistoryContext);
+        }
+
+        // Combine all context parts
+        if (contextParts.length > 0) {
+          additionalInstructions =
+            contextParts.join("\n\n") +
+            "\n\nUsa esta información para personalizar tu interpretación.";
         }
       }
 

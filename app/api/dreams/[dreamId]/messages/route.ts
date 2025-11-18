@@ -1,31 +1,41 @@
 /**
  * Dream Messages API Route
  *
- * GET /api/dreams/[dreamId]/messages - Get all messages for a dream
+ * GET /api/dreams/[dreamId]/messages - Get dream with full conversation
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { withTierGuard } from "@/lib/guards/tier-guard";
 import { createClient } from "@/lib/supabase/server";
 
 /**
  * GET /api/dreams/[dreamId]/messages
  *
- * Returns all messages for a specific dream in chronological order
+ * Returns dream details with all associated messages
+ * Requires authentication and ownership check
  */
-export const GET = withTierGuard(async (request: NextRequest, context) => {
-  const { dreamId } = context.params!;
-  const { userId } = context;
-
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ dreamId: string }> },
+) {
   try {
     const supabase = await createClient();
+    const { dreamId } = await params;
 
-    // Verify dream ownership
+    // Get authenticated user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    // Fetch dream with ownership check
     const { data: dream, error: dreamError } = await supabase
       .from("dreams")
-      .select("id")
+      .select("id, user_id, title, content, dream_date, created_at")
       .eq("id", dreamId)
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .single();
 
     if (dreamError || !dream) {
@@ -35,28 +45,33 @@ export const GET = withTierGuard(async (request: NextRequest, context) => {
       );
     }
 
-    // Get messages
+    // Fetch all messages for this dream
     const { data: messages, error: messagesError } = await supabase
       .from("dream_messages")
-      .select("*")
+      .select("id, role, content, created_at")
       .eq("dream_id", dreamId)
-      .eq("user_id", userId)
       .order("created_at", { ascending: true });
 
     if (messagesError) {
-      console.error("[API Messages] Error fetching messages:", messagesError);
+      console.error(
+        "[API Dream Messages] Error fetching messages:",
+        messagesError,
+      );
       return NextResponse.json(
         { error: "Error al obtener mensajes" },
         { status: 500 },
       );
     }
 
-    return NextResponse.json({ messages });
+    return NextResponse.json({
+      dream,
+      messages: messages || [],
+    });
   } catch (error) {
-    console.error("[API Messages] Unexpected error:", error);
+    console.error("[API Dream Messages] Unexpected error:", error);
     return NextResponse.json(
-      { error: "Error interno del servidor" },
+      { error: "Error al procesar solicitud" },
       { status: 500 },
     );
   }
-});
+}
