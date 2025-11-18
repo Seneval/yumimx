@@ -15,6 +15,7 @@ import { env } from "@/lib/env";
  * - /auth/* (callbacks de OAuth)
  * - /_next/* (archivos estáticos)
  * - /api/auth/* (endpoints de autenticación)
+ * - /api/public/* (endpoints públicos como demo de interpretación)
  *
  * Rutas protegidas (requieren autenticación):
  * - /chat
@@ -65,7 +66,8 @@ export async function middleware(request: NextRequest) {
       (route) => pathname === route || pathname.startsWith(route + "/"),
     ) ||
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/auth");
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/public");
 
   // Si es ruta pública, permitir acceso
   if (isPublicRoute) {
