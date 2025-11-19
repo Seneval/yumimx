@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Calendar, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 interface Dream {
   id: string;
@@ -143,9 +144,15 @@ export function DreamDetailModal({
                             : "bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white dark:backdrop-blur"
                         }`}
                       >
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                          {message.content}
-                        </p>
+                        {message.role === "user" ? (
+                          <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                            {message.content}
+                          </p>
+                        ) : (
+                          <div className="prose prose-sm max-w-none text-sm leading-relaxed dark:prose-invert prose-p:my-2 prose-strong:font-bold prose-strong:text-inherit">
+                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

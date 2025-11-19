@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import ReactMarkdown from "react-markdown";
 
 export function Hero() {
   const [dream, setDream] = useState("");
@@ -113,7 +114,7 @@ export function Hero() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="dark:border-violet-400 dark:bg-transparent dark:text-white dark:hover:bg-violet-500/20"
+                  className="transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 dark:border-violet-400 dark:bg-transparent dark:text-white dark:hover:bg-violet-500/20"
                   onClick={() => {
                     document
                       .getElementById("demo")
@@ -163,17 +164,18 @@ export function Hero() {
                 </p>
 
                 <Textarea
-                  placeholder="Describe tu sueño aquí... (mínimo 50 caracteres)"
+                  placeholder="Describe tu sueño aquí... (mínimo 50 caracteres, máximo 2,000)"
                   value={dream}
                   onChange={(e) => setDream(e.target.value)}
                   className="mb-4 min-h-[150px] bg-gray-50 text-gray-900 placeholder:text-gray-500 dark:bg-white/90"
                   disabled={isLoading}
+                  maxLength={2000}
                 />
 
                 <Button
                   onClick={handleInterpret}
                   disabled={isLoading || dream.length < 50}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 dark:from-violet-500 dark:to-purple-600 dark:hover:from-violet-600 dark:hover:to-purple-700"
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white transition-all duration-200 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md dark:from-violet-500 dark:to-purple-600 dark:hover:from-violet-600 dark:hover:to-purple-700"
                   size="lg"
                 >
                   {isLoading ? "Interpretando..." : "Interpretar mi sueño"}
@@ -184,9 +186,9 @@ export function Hero() {
                     <h4 className="mb-3 font-semibold text-indigo-900 dark:text-violet-900">
                       Interpretación:
                     </h4>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {interpretation}
-                    </p>
+                    <div className="prose prose-sm max-w-none text-gray-900">
+                      <ReactMarkdown>{interpretation}</ReactMarkdown>
+                    </div>
                     <div className="mt-4 rounded-lg bg-indigo-100 p-4 text-xs text-indigo-800 dark:bg-violet-50 dark:text-violet-800">
                       💡 Crea una cuenta gratuita para guardar tus sueños y
                       tener conversaciones más profundas con el asistente.

@@ -33,7 +33,7 @@ export function GoogleLoginButton() {
     <button
       onClick={handleLogin}
       disabled={isLoading}
-      className="flex h-14 w-full items-center justify-center gap-3 rounded-full bg-white px-8 text-lg font-medium text-gray-900 shadow-lg transition-all hover:shadow-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-200"
+      className="flex h-14 w-full items-center justify-center gap-3 rounded-full bg-white px-8 text-lg font-medium text-gray-900 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-200"
     >
       {isLoading ? (
         <>

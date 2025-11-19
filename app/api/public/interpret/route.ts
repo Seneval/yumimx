@@ -9,12 +9,13 @@
 
 import { NextRequest } from "next/server";
 import { getOpenAIClient } from "@/lib/openai/client";
+import { CHAR_LIMITS, TOKEN_LIMITS } from "@/lib/constants/limits";
 
 /**
  * POST /api/public/interpret
  *
  * Body:
- * - dream: string (required, min 50 chars, max 1000 chars)
+ * - dream: string (required, min 50 chars, max 2000 chars)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -32,10 +33,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (dream.trim().length < 50) {
+    if (dream.trim().length < CHAR_LIMITS.PUBLIC_DREAM_MIN) {
       return new Response(
         JSON.stringify({
-          error: "El sueño debe tener al menos 50 caracteres",
+          error: `El sueño debe tener al menos ${CHAR_LIMITS.PUBLIC_DREAM_MIN} caracteres`,
         }),
         {
           status: 400,
@@ -44,10 +45,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (dream.length > 1000) {
+    if (dream.length > CHAR_LIMITS.PUBLIC_DREAM_MAX) {
       return new Response(
         JSON.stringify({
-          error: "Para sueños más largos, por favor crea una cuenta gratuita",
+          error: `Máximo ${CHAR_LIMITS.PUBLIC_DREAM_MAX} caracteres en el demo. Crea una cuenta gratuita para sueños más largos.`,
         }),
         {
           status: 400,
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
     // Run assistant with streaming (using free assistant)
     const stream = await openai.beta.threads.runs.stream(thread.id, {
       assistant_id: process.env.OPENAI_ASSISTANT_ID_FREE!,
+      max_completion_tokens: TOKEN_LIMITS.ASSISTANT_RESPONSE_MAX,
     });
 
     // Transform OpenAI stream to Response stream

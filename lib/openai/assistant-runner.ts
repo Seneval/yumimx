@@ -11,6 +11,7 @@ import "server-only";
 
 import { getOpenAIClient, getAssistantIdForTier } from "./client";
 import type { UserTier } from "@/types/subscription";
+import { TOKEN_LIMITS } from "@/lib/constants/limits";
 
 /**
  * Run assistant on a thread with streaming
@@ -39,6 +40,7 @@ export async function runAssistantStream(
     const stream = await openai.beta.threads.runs.stream(threadId, {
       assistant_id: assistantId,
       additional_instructions: additionalInstructions,
+      max_completion_tokens: TOKEN_LIMITS.ASSISTANT_RESPONSE_MAX,
     });
 
     return stream;
@@ -70,6 +72,7 @@ export async function runAssistant(
     const run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId,
       additional_instructions: additionalInstructions,
+      max_completion_tokens: TOKEN_LIMITS.ASSISTANT_RESPONSE_MAX,
     });
 
     console.log(

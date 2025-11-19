@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { CHAR_LIMITS } from "@/lib/constants/limits";
 
 /**
  * GET /api/profile/context
@@ -86,9 +87,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Contexto inválido" }, { status: 400 });
     }
 
-    if (context.length > 5000) {
+    if (context.length > CHAR_LIMITS.USER_CONTEXT_MAX) {
       return NextResponse.json(
-        { error: "Contexto demasiado largo (máx 5000 caracteres)" },
+        {
+          error: `Contexto demasiado largo (máx ${CHAR_LIMITS.USER_CONTEXT_MAX.toLocaleString()} caracteres)`,
+        },
         { status: 400 },
       );
     }

@@ -7,6 +7,7 @@ import { Send, Sparkles, User, Menu } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -198,7 +199,7 @@ export function MainChatInterface({
               onClick={handleNewDream}
               variant="ghost"
               size="sm"
-              className="text-sm dark:text-violet-300 dark:hover:bg-violet-500/20"
+              className="text-sm transition-all duration-200 hover:scale-105 active:scale-95 dark:text-violet-300 dark:hover:bg-violet-500/20"
             >
               + Nuevo sueño
             </Button>
@@ -250,10 +251,17 @@ export function MainChatInterface({
                       : "bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white dark:backdrop-blur"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {message.content ||
-                      (message.role === "assistant" && isLoading ? "..." : "")}
-                  </p>
+                  {message.role === "user" ? (
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                      {message.content}
+                    </p>
+                  ) : (
+                    <div className="prose prose-sm max-w-none text-sm leading-relaxed dark:prose-invert prose-p:my-2 prose-strong:font-bold prose-strong:text-inherit">
+                      <ReactMarkdown>
+                        {message.content || (isLoading ? "..." : "")}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -286,7 +294,7 @@ export function MainChatInterface({
             <Button
               onClick={handleSendMessage}
               disabled={!input.trim() || isLoading}
-              className="h-[60px] w-[60px] shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-violet-500 dark:to-purple-600 dark:hover:from-violet-600 dark:hover:to-purple-700"
+              className="h-[60px] w-[60px] shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-200 hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md dark:from-violet-500 dark:to-purple-600 dark:hover:from-violet-600 dark:hover:to-purple-700"
               size="icon"
             >
               <Send className="h-5 w-5" />

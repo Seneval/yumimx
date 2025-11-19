@@ -19,6 +19,7 @@ import { addMessageToThread, createThread } from "@/lib/openai/threads";
 import { runAssistantStream } from "@/lib/openai/assistant-runner";
 import { TierService } from "@/lib/tier-check";
 import { buildDreamHistoryContext } from "@/lib/services/dream-context-builder";
+import { CHAR_LIMITS } from "@/lib/constants/limits";
 
 /**
  * POST /api/chat
@@ -51,9 +52,17 @@ export const POST = withMessageLimitGuard(
         return NextResponse.json({ error: "Mensaje vacío" }, { status: 400 });
       }
 
-      if (message.length > 10000) {
+      // Apply different limits based on user tier
+      const maxLength =
+        userTier === "paid"
+          ? CHAR_LIMITS.PAID_MESSAGE_MAX
+          : CHAR_LIMITS.FREE_MESSAGE_MAX;
+
+      if (message.length > maxLength) {
         return NextResponse.json(
-          { error: "Mensaje demasiado largo (máx 10,000 caracteres)" },
+          {
+            error: `Mensaje demasiado largo (máx ${maxLength.toLocaleString()} caracteres)`,
+          },
           { status: 400 },
         );
       }

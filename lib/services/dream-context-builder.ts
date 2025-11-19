@@ -7,6 +7,7 @@
 
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { CONTEXT_LIMITS } from "@/lib/constants/limits";
 
 interface DreamContextData {
   dream_date: string;
@@ -18,10 +19,8 @@ interface DreamContextData {
 /**
  * Builds dream history context for paid users
  *
- * Fetches last 3 dreams (excluding current one) with their interpretations
- * Truncates content to reasonable limits to manage token usage:
- * - Dream content: 1000 chars max
- * - Interpretation: 300 chars max
+ * Fetches last N dreams (excluding current one) with their interpretations
+ * Truncates content to reasonable limits to manage token usage
  *
  * @param userId - The user ID
  * @param currentDreamId - The current dream ID to exclude from context
@@ -34,7 +33,7 @@ export async function buildDreamHistoryContext(
   try {
     const supabase = await createClient();
 
-    // Fetch last 3 dreams (excluding current)
+    // Fetch last N dreams (excluding current)
     const { data: dreams, error: dreamsError } = await supabase
       .from("dreams")
       .select("id, dream_date, title, content, created_at")
@@ -42,7 +41,7 @@ export async function buildDreamHistoryContext(
       .neq("id", currentDreamId)
       .order("dream_date", { ascending: false })
       .order("created_at", { ascending: false })
-      .limit(3);
+      .limit(CONTEXT_LIMITS.DREAM_HISTORY_COUNT);
 
     if (dreamsError) {
       console.error(
@@ -71,9 +70,12 @@ export async function buildDreamHistoryContext(
         return {
           dream_date: dream.dream_date,
           title: dream.title,
-          content: truncate(dream.content, 1000),
+          content: truncate(dream.content, CONTEXT_LIMITS.DREAM_CONTENT_MAX),
           interpretation: messages?.content
-            ? truncate(messages.content, 300)
+            ? truncate(
+                messages.content,
+                CONTEXT_LIMITS.DREAM_INTERPRETATION_MAX,
+              )
             : null,
         };
       }),

@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withTierGuard } from "@/lib/guards/tier-guard";
 import { createClient } from "@/lib/supabase/server";
 import { createThread, addMessageToThread } from "@/lib/openai/threads";
+import { CHAR_LIMITS } from "@/lib/constants/limits";
 
 /**
  * POST /api/dreams
@@ -19,7 +20,7 @@ import { createThread, addMessageToThread } from "@/lib/openai/threads";
  * - title: string (optional)
  * - dream_date: string (optional, ISO date)
  */
-export const POST = withTierGuard(async (request, { userId }) => {
+export const POST = withTierGuard(async (request, { userId, userTier }) => {
   try {
     const body = await request.json();
     const { content, title, dream_date } = body;
@@ -32,16 +33,26 @@ export const POST = withTierGuard(async (request, { userId }) => {
       );
     }
 
-    if (content.length < 50) {
+    if (content.length < CHAR_LIMITS.PUBLIC_DREAM_MIN) {
       return NextResponse.json(
-        { error: "El sueño debe tener al menos 50 caracteres" },
+        {
+          error: `El sueño debe tener al menos ${CHAR_LIMITS.PUBLIC_DREAM_MIN} caracteres`,
+        },
         { status: 400 },
       );
     }
 
-    if (content.length > 10000) {
+    // Apply different limits based on user tier
+    const maxLength =
+      userTier === "paid"
+        ? CHAR_LIMITS.PAID_MESSAGE_MAX
+        : CHAR_LIMITS.FREE_MESSAGE_MAX;
+
+    if (content.length > maxLength) {
       return NextResponse.json(
-        { error: "El sueño no puede exceder 10,000 caracteres" },
+        {
+          error: `El sueño no puede exceder ${maxLength.toLocaleString()} caracteres`,
+        },
         { status: 400 },
       );
     }
